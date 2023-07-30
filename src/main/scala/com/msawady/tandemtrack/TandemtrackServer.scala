@@ -23,14 +23,15 @@ object TandemtrackServer:
       // in the underlying routes.
       httpApp = (
         TandemtrackRoutes.helloWorldRoutes[F](helloWorldAlg) <+>
-        TandemtrackRoutes.jokeRoutes[F](jokeAlg)
+          TandemtrackRoutes.jokeRoutes[F](jokeAlg)
       ).orNotFound
 
       // With Middlewares in place
       finalHttpApp = Logger.httpApp(true, true)(httpApp)
 
-      _ <- 
-        EmberServerBuilder.default[F]
+      _ <-
+        EmberServerBuilder
+          .default[F]
           .withHost(ipv4"0.0.0.0")
           .withPort(port"8080")
           .withHttpApp(finalHttpApp)

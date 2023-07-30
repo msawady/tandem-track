@@ -1,0 +1,36 @@
+version: '3.8'
+
+x-template: &flyway-template
+  image: flyway/flyway:latest
+  volumes:
+    - ./database/migrate:/flyway/sql
+    - ./database/conf:/flyway/conf
+  depends_on:
+    - db
+
+services:
+  flyway-clean:
+    <<: *flyway-template
+    command: clean
+
+  flyway-migrate:
+    <<: *flyway-template
+    command: migrate
+
+  flyway-info:
+    <<: *flyway-template
+    command: info
+
+  db:
+    container_name: tandem-track-db
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    expose:
+      - "5433"
+    ports:
+      - "5433:5433"
+    volumes:
+      - ./database/init:/docker-entrypoint-initdb.d
+    command: -p 5433
